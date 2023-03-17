@@ -24,4 +24,4 @@ couleurs.reverse()
 #verifier et colonne et ligne si il ya 4 jetons 
 #retirer le coup jouer
 #gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
-#si tableau remplie sans ligne de 4 = pas de vainqueur
+#si tableau remplie sans ligne de 4 = pas de vainqueur..
