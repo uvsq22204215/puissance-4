@@ -7,9 +7,9 @@ from random import*
 ##création d'une fenêtre
 fen= Tk()
 fen.title("Puissance 4")
- 
+fen.geometry("1300x1300")
 ##création du canevas
-can= Canvas(fen,width=710, heigh=610, bg="blue")
+can= Canvas(fen,width=710, heigh=610, bg="purple")
 can.pack()
  
 ##fonction qui permet d'alterner les couleurs à chaque clique grâce à "couleurs.reverse()"
@@ -21,6 +21,11 @@ def player(event):
     else:
         player='yellow'
 couleurs.reverse()
+
+fen.mainloop()
+
+
+
 #verifier et colonne et ligne si il ya 4 jetons 
 #retirer le coup jouer
 #gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
