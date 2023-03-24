@@ -1,4 +1,7 @@
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> bc7b303d0321e3162153e78d89a74cdda1c8412b
 #ramdom.randit pour choisir le 1er joueur
 #définir colonne et ligne
 from tkinter import*
@@ -26,3 +29,5 @@ couleurs.reverse()
 #retirer le coup jouer
 #gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
 #si tableau remplie sans ligne de 4 = pas de vainqueur...
+
+h 
