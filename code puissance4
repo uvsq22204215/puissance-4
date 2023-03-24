@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 #ramdom.randit pour choisir le 1er joueur
 #définir colonne et ligne
 from tkinter import*
@@ -29,4 +30,42 @@ fen.mainloop()
 #gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
 #si tableau remplie sans ligne de 4 = pas de vainqueur...
 #faire un boutton quitter/recommencer/choisir joueur 
+=======
+from tkinter import *
+from random import randint
+
+# création d'une fenêtre
+fen = Tk()
+fen.title("Puissance 4")
+
+# création du canevas
+can = Canvas(fen, width=710, height=610, bg="blue")
+can.pack()
+
+# fonction qui permet d'alterner les couleurs à chaque clique grâce à "couleurs.reverse()"
+couleurs = [('red', 1), ('yellow', 2)]
+
+def player(event):
+    aleatoire = randint(1, 2)
+    if aleatoire == 1:
+        player_color = 'red'
+    else:
+        player_color = 'yellow'
+    couleurs.reverse()
+    
+    ##fonction qui fait apparître un pion à la case cliquéé
+def mouvement(event):
+    x,y, = event.x, event.y
+    if detec_clic >0 and detec_clic <700 :
+        print("d'accord")
+##        can.create_oval(event.x, event.y,fill="player")
+    else:
+        print("oups, il semblerait qu'il y'ai une erreur")
+    command=tableur
+
+# verifier colonne et ligne et diagonale si il y a 4 jetons
+# pouvoir retirer un coup jouer si on s'est trompé
+#si tableau remplie sans ligne de 4 = pas de gagnant
+kk
+
 
