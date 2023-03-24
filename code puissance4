@@ -23,9 +23,7 @@ def player(event):
 couleurs.reverse()
 
 fen.mainloop()
-
-
-
+n
 
 #verifier et colonne et ligne si il ya 4 jetons 
 #retirer le coup jouer
