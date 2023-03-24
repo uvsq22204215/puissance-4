@@ -19,5 +19,8 @@ def player(event):
     else:
         player_color = 'yellow'
     couleurs.reverse()
+# verifier colonne et ligne et diagonale si il y a 4 jetons
+# pouvoir retirer un coup jouer si on s'est trompé
+#si tableau remplie sans ligne de 4 = pas de gagnant
 
 
