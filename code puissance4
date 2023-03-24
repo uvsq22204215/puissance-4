@@ -1,37 +1,67 @@
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> bc7b303d0321e3162153e78d89a74cdda1c8412b
-#ramdom.randit pour choisir le 1er joueur
-#définir colonne et ligne
-from tkinter import*
- 
-from random import*
- 
-##création d'une fenêtre
-fen= Tk()
-fen.title("Puissance 4")
- 
-##création du canevas
-can= Canvas(fen,width=710, heigh=610, bg="blue")
-can.pack()
- 
-##fonction qui permet d'alterner les couleurs à chaque clique grâce à "couleurs.reverse()"
-couleurs=[('red',1),('yellow',2)]
-def player(event):
-    Aléatoire=randint(1,2)
-    if Aléatoire==1:
-        player='red'
-    else:
-        player='yellow'
-couleurs.reverse()
-#verifier et colonne et ligne si il ya 4 jetons 
-#retirer le coup jouer
-#gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
-#si tableau remplie sans ligne de 4 = pas de vainqueur...
-<<<<<<< HEAD
-=======
-#faire un boutton quitter/recommencer/choisir joueur 
->>>>>>> 502d2e8f341208f455c342f45c919798356e17c2
+from tkinter import *
+from random import randint
 
-h 
+# création d'une fenêtre
+fen = Tk()
+fen.title("Puissance 4")
+
+# création du canevas
+can = Canvas(fen, width=710, height=610, bg="blue")
+can.pack()
+
+# fonction qui permet d'alterner les couleurs à chaque clique grâce à "couleurs.reverse()"
+couleurs = [('red', 1), ('yellow', 2)]
+
+def player(event):
+    aleatoire = randint(1, 2)
+    if aleatoire == 1:
+        player_color = 'red'
+    else:
+        player_color = 'yellow'
+    couleurs.reverse()
+
+# retirer le coup joué
+# gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
+# si tableau rempli sans ligne de 4 = pas de vainqueur...
+
+# vérifier colonnes et lignes si il y a 4 jetons
+rows, cols = 6, 7
+grid = [[' ' for _ in range(cols)] for _ in range(rows)]
+
+# Fonction pour afficher la grille de jeu
+def display_grid():
+    for row in range(rows):
+        print('| ' + ' | '.join(grid[row]) + ' |')
+    print('+-' + '--+-' * (cols-1))
+
+# Fonction pour vérifier les colonnes
+def check_cols():
+    for col in range(cols):
+        for row in range(rows-3):
+            if grid[row][col] == grid[row+1][col] == grid[row+2][col] == grid[row+3][col] and grid[row][col] != ' ':
+                return True
+    return False
+
+# Fonction pour vérifier les lignes
+def check_rows():
+    for row in range(rows):
+        for col in range(cols-3):
+            if grid[row][col] == grid[row][col+1] == grid[row][col+2] == grid[row][col+3] and grid[row][col] != ' ':
+                return True
+    return False
+
+# Exemple d'utilisation :
+grid[0][0] = 'X'
+grid[0][1] = 'O'
+grid[0][2] = 'O'
+grid[0][3] = 'X'
+grid[1][3] = 'X'
+grid[2][3] = 'O'
+grid[3][3] = 'X'
+display_grid()
+if check_cols() or check_rows():
+    print('Quatre jetons alignés !')
+
+# retirer le coup joué
+# gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
+# si tableau rempli sans ligne de 4 = pas de vainqueur...
