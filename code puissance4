@@ -25,5 +25,6 @@ couleurs.reverse()
 #retirer le coup jouer
 #gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
 #si tableau remplie sans ligne de 4 = pas de vainqueur...
+#faire un boutton quitter/recommencer/choisir joueur 
 h 
 
