@@ -26,6 +26,7 @@ fen.mainloop()
 
 
 
+
 #verifier et colonne et ligne si il ya 4 jetons 
 #retirer le coup jouer
 #gagnant = 4 jetons alignés diagonale et verticales et horizontales (if)
