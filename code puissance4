@@ -23,7 +23,7 @@ def win_win(color):
     w.mainloop()
 
 
-def create_grid_list():
+def create_grid_list():#creation d'une liste qui contient la grille
     l = []
 
     for row in range(6):
@@ -104,7 +104,7 @@ def get_win():
             win_win(winning_team)
     
     return winning_team != "white"
-    f 
+
         
 
 
