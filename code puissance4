@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import random
 import tkinter as tk
 
@@ -105,18 +106,4 @@ def get_win():
     
     return winning_team != "white"
 
-heee
-
-        
-
-
-
-
-
-
-    
-
-
-
-
-
+hefs
