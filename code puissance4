@@ -9,7 +9,7 @@ def print_list(l):
     print()
 
 
-def win_win(color):
+def win_win(color):#a mettre 
     w = tk.Tk()
     w.geometry("200x75")
     w.config(bg=color)
@@ -104,6 +104,8 @@ def get_win():
             win_win(winning_team)
     
     return winning_team != "white"
+
+heee
 
         
 
