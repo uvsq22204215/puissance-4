@@ -106,4 +106,4 @@ def get_win():
     
     return winning_team != "white"
 
-hefs
+hasattr 
