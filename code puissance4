@@ -1,8 +1,7 @@
-<<<<<<< HEAD
 import random
 import tkinter as tk
 
-
+#nouveau shera
 def print_list(l):
     print()
     for el in l:
@@ -10,7 +9,7 @@ def print_list(l):
     print()
 
 
-def win_win(color):#a mettre 
+def affiche_le_gagnant(color):
     w = tk.Tk()
     w.geometry("200x75")
     w.config(bg=color)
@@ -18,13 +17,13 @@ def win_win(color):#a mettre
     l_win = tk.Label(w, text=f"Team {color} won", font=(20,), bg=color)
     if color == "white":
         w.geometry("300x75")
-        l_win.config(text="Nobody won, the grid is full!")
+        l_win.config(text="Aucun gagnant!")
     l_win.place(relx=.5, rely=.5, anchor="center")
 
     w.mainloop()
 
 
-def create_grid_list():#creation d'une liste qui contient la grille
+def creaction_liste_grille():
     l = []
 
     for row in range(6):
@@ -35,19 +34,18 @@ def create_grid_list():#creation d'une liste qui contient la grille
     return l
 
 
+def gagant_ligne(l_jeton):
 
-def get_win_line(l_tokens):
-
-    for j in range(len(l_tokens)):
-        tmp = l_tokens[j]
+    for j in range(len(l_jeton)):
+        tmp = l_jeton[j]
         for i in range(4):
             if tmp[i:i+4] == [0, 0, 0, 0] :
-                return "red"
+                return "maroon"
             elif tmp[i:i+4] == [1,1,1,1]:
-                return "yellow"
+                return "purple"
     return "white"
 
-def get_win_col(l_tokens):
+def gagnant_col(l_jeton):
 
     def get_col(l, i):
         col = []
@@ -56,54 +54,59 @@ def get_win_col(l_tokens):
             col.append(l[j][i])
         return col
 
-    for C in range(len(l_tokens[0])):
-        col = get_col(l_tokens, C)
+    for C in range(len(l_jeton[0])):
+        col = get_col(l_jeton, C)
         
         for i in range(3):
             if col[i:i+4] == [0, 0, 0, 0] :
-                return "red"
+                return "maroon"
             elif col[i:i+4] == [1,1,1,1]:
-                return "yellow"
+                return "purple"
     return "white"
 
-def get_win_diags(l_tokens):
+def gagnant_diag(l_jeton):
 
     for x in range(4):
         for y in range(3):
             tmp1, tmp2 = [],[]
             for d in range(4):
-                tmp1.append(l_tokens[y+d][x+d])
-                tmp2.append(l_tokens[len(l_tokens)-1-y-d][x+d])
+                tmp1.append(l_jeton[y+d][x+d])
+                tmp2.append(l_jeton[len(l_jeton)-1-y-d][x+d])
 
             if tmp1 == [0, 0, 0, 0] or tmp2 == [0, 0, 0, 0] :
-                return "red"
+                return "maroon"
             elif tmp1 == [1,1,1,1] or tmp2 == [1,1,1,1]:
-                return "yellow"
+                return "purple"
     
     return "white"
 
+def gagnant():
+    global d_jeton, l_jeton, equipe_gagnante, canvas
 
-
-def get_win():
-    global d_tokens, l_tokens, winning_team, canvas
-
-    if winning_team == "white":
-        line_color = get_win_line(l_tokens)
-        diags_color = get_win_diags(l_tokens)
-        col_color = get_win_col(l_tokens)
+    if equipe_gagnante == "white":
+        line_color = gagant_ligne(l_jeton)
+        diags_color = gagnant_diag(l_jeton)
+        col_color = gagnant_col(l_jeton)
 
         if line_color != "white": 
-            winning_team = line_color
-            win_win(winning_team)
+            equipe_gagnante = line_color
+            affiche_le_gagnant(equipe_gagnante)
 
         elif diags_color != "white":
-            winning_team = diags_color
-            win_win(winning_team)
+            equipe_gagnante = diags_color
+            affiche_le_gagnant(equipe_gagnante)
 
         elif col_color != "white": 
-            winning_team = col_color
-            win_win(winning_team)
-    
-    return winning_team != "white"
+            equipe_gagnante = col_color
 
-hasattr 
+            affiche_le_gagnant(equipe_gagnante)
+    
+    return equipe_gagnante != "white"
+        
+
+
+def create_jeton(x,y,color="white", outline_=""):
+    global canvas
+    x0,y0, x1,y1 = x+BORDER,y+BORDER, x+radius+BORDER, y+radius+BORDER
+    jetons = canvas.create_oval(x0,y0, x1,y1, fill=color, outline="blue")
+    return jetons
