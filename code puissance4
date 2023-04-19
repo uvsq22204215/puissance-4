@@ -1,6 +1,15 @@
 import random
 import tkinter as tk
 
+radius = 75
+BORDER = 20
+WITDH,HEIGHT = 7*radius + (BORDER*2), 6*radius + (BORDER*2)
+
+team = random.randint(0,1)
+team_color = ["maroon", "purple"]
+
+root = tk.Tk()
+
 #nouveau shera
 def print_list(l):
     print()
@@ -110,3 +119,58 @@ def create_jeton(x,y,color="white", outline_=""):
     x0,y0, x1,y1 = x+BORDER,y+BORDER, x+radius+BORDER, y+radius+BORDER
     jetons = canvas.create_oval(x0,y0, x1,y1, fill=color, outline="blue")
     return jetons
+
+def create_blanks():
+    
+    for i in range(6):
+        for j in range(7):
+            create_jeton(j*radius,i*radius)
+
+def tomber_du_jeton(jetons, y_max, id_after=None):
+    global canvas
+
+    dy = 30
+    latency = 20
+    y = canvas.coords(jetons)[3]
+
+    if y > y_max:
+        canvas.after_cancel(id_after)
+    elif y+dy > y_max : 
+        canvas.move(jetons,0, y_max-y)
+    else:
+        canvas.move(jetons,0,dy)
+        id_after = canvas.after(latency, lambda:tomber_du_jeton(jetons,y_max, id_after))
+
+
+def ajouter_jetons(event, base_x=-1):
+    global canvas, id_after, l_tokens_obj, team, l_moves, l_jeton
+
+    if base_x == -1:
+        x = (event.x- BORDER)//radius
+    else:
+        x = base_x
+
+
+    if (x >= 0) and (x <= 6) and (d_jeton[x]<6):
+        team = (team + 1) % 2
+
+        column = x 
+        i = len(l_jeton)-1
+        while l_jeton[i][column]!=-1 and i>0: 
+                i -= 1
+        
+        l_jeton[i][column] = team
+
+        l_x_moves.append(x)
+        d_jeton[x] += 1
+
+        
+        l_tokens_obj.append(create_jeton(x* radius,0, team_color[team]))
+        tomber_du_jeton(l_tokens_obj[-1], HEIGHT-BORDER-((d_jeton[x]-1)*radius))
+        
+        gagnant()
+
+        if len(l_tokens_obj) == 42:
+            affiche_le_gagnant("white")
+
+#il reste les 3 bouttons plus le EXIT
