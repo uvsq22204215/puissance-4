@@ -1,24 +1,30 @@
-import random
+import random 
 import tkinter as tk
 
-radius = 75
-BORDER = 20
-WITDH,HEIGHT = 7*radius + (BORDER*2), 6*radius + (BORDER*2)
+#taille fenetre
+radius = 80
+BORDER = 25
 
+#largeur, hauteur
+WITDH,HEIGHT = 560 + (50), 480 + (50)
+
+#Joueur choisis aléatoirement
 team = random.randint(0,1)
+
+#Couleur des 2 joueurs
 team_color = ["maroon", "purple"]
 
-root = tk.Tk()
+root = tk.Tk()#Création de la fenêtre
 
-#nouveau shera
-def print_list(l):
+
+def print_list(l):#création d'une liste vide
     print()
     for el in l:
         print(el)
     print()
 
 
-def affiche_le_gagnant(color):
+def affiche_le_gagnant(color):#création d'une fenêtre qui affiche le gagnant
     w = tk.Tk()
     w.geometry("200x75")
     w.config(bg=color)
@@ -32,7 +38,7 @@ def affiche_le_gagnant(color):
     w.mainloop()
 
 
-def creaction_liste_grille():
+def creaction_liste_grille():#création d'une liste vide contenant une grille avec 6 lignes et 7 colonnes
     l = []
 
     for row in range(6):
@@ -89,6 +95,8 @@ def gagnant_diag(l_jeton):
     
     return "white"
 
+
+
 def gagnant():
     global d_jeton, l_jeton, equipe_gagnante, canvas
 
@@ -120,7 +128,8 @@ def create_jeton(x,y,color="white", outline_=""):
     jetons = canvas.create_oval(x0,y0, x1,y1, fill=color, outline="blue")
     return jetons
 
-def create_blanks():
+
+def create_blanks():#fait les rond blanc
     
     for i in range(6):
         for j in range(7):
@@ -143,7 +152,7 @@ def tomber_du_jeton(jetons, y_max, id_after=None):
 
 
 def ajouter_jetons(event, base_x=-1):
-    global canvas, id_after, l_tokens_obj, team, l_moves, l_jeton
+    global canvas, id_after, l_jeton_obj, team, l_moves, l_jeton
 
     if base_x == -1:
         x = (event.x- BORDER)//radius
@@ -165,12 +174,26 @@ def ajouter_jetons(event, base_x=-1):
         d_jeton[x] += 1
 
         
-        l_tokens_obj.append(create_jeton(x* radius,0, team_color[team]))
-        tomber_du_jeton(l_tokens_obj[-1], HEIGHT-BORDER-((d_jeton[x]-1)*radius))
+        l_jeton_obj.append(create_jeton(x* radius,0, team_color[team]))
+        tomber_du_jeton(l_jeton_obj[-1], HEIGHT-BORDER-((d_jeton[x]-1)*radius))
         
         gagnant()
 
-        if len(l_tokens_obj) == 42:
+        if len(l_jeton_obj) == 42:
             affiche_le_gagnant("white")
 
-#il reste les 3 bouttons plus le EXIT
+
+def annuler_coups(canvas):#boutton pour annuler un coups jouer
+    global d_jeton,l_jeton_obj,l_x_moves, team, l_jeton
+
+    if l_x_moves != []:
+        column = l_x_moves.pop()
+
+        if d_jeton[column] > 0:
+            
+            i = 6-d_jeton[column]
+            l_jeton[i][column] = -1
+
+            team = (team + 1) % 2
+            d_jeton[column] -= 1
+            canvas.delete(l_jeton_obj.pop())
