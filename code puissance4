@@ -1,199 +1,233 @@
-import random 
 import tkinter as tk
+import tkinter.font as font 
+from tkinter import ttk
+import pygame 
 
-#taille fenetre
-radius = 80
-BORDER = 25
+def focus_on_simple():
+    global dans_simple
+    if not dans_simple:
+        dans_simple = True
 
-#largeur, hauteur
-WITDH,HEIGHT = 560 + (50), 480 + (50)
-
-#Joueur choisis aléatoirement
-team = random.randint(0,1)
-
-#Couleur des 2 joueurs
-team_color = ["maroon", "purple"]
-
-root = tk.Tk()#Création de la fenêtre
-
-
-def print_list(l):#création d'une liste vide
-    print()
-    for el in l:
-        print(el)
-    print()
-
-
-def affiche_le_gagnant(color):#création d'une fenêtre qui affiche le gagnant
-    w = tk.Tk()
-    w.geometry("200x75")
-    w.config(bg=color)
-
-    l_win = tk.Label(w, text=f"Team {color} won", font=(20,), bg=color)
-    if color == "white":
-        w.geometry("300x75")
-        l_win.config(text="Aucun gagnant!")
-    l_win.place(relx=.5, rely=.5, anchor="center")
-
-    w.mainloop()
-
-
-def creaction_liste_grille():#création d'une liste vide contenant une grille avec 6 lignes et 7 colonnes
-    l = []
-
-    for row in range(6):
-        l.append([])
-        for _ in range(7):
-            l[row].append(-1)
-
-    return l
-
-
-def gagant_ligne(l_jeton):
-
-    for j in range(len(l_jeton)):
-        tmp = l_jeton[j]
-        for i in range(4):
-            if tmp[i:i+4] == [0, 0, 0, 0] :
-                return "maroon"
-            elif tmp[i:i+4] == [1,1,1,1]:
-                return "purple"
-    return "white"
-
-def gagnant_col(l_jeton):
-
-    def get_col(l, i):
-        col = []
-
-        for j in range(len(l)):
-            col.append(l[j][i])
-        return col
-
-    for C in range(len(l_jeton[0])):
-        col = get_col(l_jeton, C)
-        
-        for i in range(3):
-            if col[i:i+4] == [0, 0, 0, 0] :
-                return "maroon"
-            elif col[i:i+4] == [1,1,1,1]:
-                return "purple"
-    return "white"
-
-def gagnant_diag(l_jeton):
-
-    for x in range(4):
-        for y in range(3):
-            tmp1, tmp2 = [],[]
-            for d in range(4):
-                tmp1.append(l_jeton[y+d][x+d])
-                tmp2.append(l_jeton[len(l_jeton)-1-y-d][x+d])
-
-            if tmp1 == [0, 0, 0, 0] or tmp2 == [0, 0, 0, 0] :
-                return "maroon"
-            elif tmp1 == [1,1,1,1] or tmp2 == [1,1,1,1]:
-                return "purple"
+# Base de Jeu (1v1)
+def jeu_1v1():
     
-    return "white"
+    # Efface tous les widgets sauf le label contenant l'image de background
+    for widget in Racine.winfo_children():
+        if widget != background_label:
+            widget.pack_forget()
 
+    # Définir les dimensions de la grille de jeu
+    ROWS = 6
+    COLS = 7
 
+    # Créer la grille de jeu
+    board = [[0 for j in range(COLS)] for i in range(ROWS)]
 
-def gagnant():
-    global d_jeton, l_jeton, equipe_gagnante, canvas
+    # Définir la taille de chaque case de la grille
+    CELL_SIZE = 110
 
-    if equipe_gagnante == "white":
-        line_color = gagant_ligne(l_jeton)
-        diags_color = gagnant_diag(l_jeton)
-        col_color = gagnant_col(l_jeton)
+    # Définir la couleur de fond de la grille
+    BG_COLOR = "#0074D9"
 
-        if line_color != "white": 
-            equipe_gagnante = line_color
-            affiche_le_gagnant(equipe_gagnante)
+    # Définir la couleur des jetons
+    PLAYER1_COLOR = "#FF4136"
+    PLAYER2_COLOR = "#2ECC40"
 
-        elif diags_color != "white":
-            equipe_gagnante = diags_color
-            affiche_le_gagnant(equipe_gagnante)
+    # Définir les fonctions pour dessiner la grille et les jetons
+    def draw_board():
+        for i in range(ROWS):
+            for j in range(COLS):
+                x1 = j * CELL_SIZE
+                y1 = i * CELL_SIZE
+                x2 = x1 + CELL_SIZE
+                y2 = y1 + CELL_SIZE
+                canvas.create_rectangle(x1, y1, x2, y2, fill=BG_COLOR, outline="black",width=4)
 
-        elif col_color != "white": 
-            equipe_gagnante = col_color
+    def draw_token(row, col, player):
+        x = col * CELL_SIZE + CELL_SIZE // 2
+        y = row * CELL_SIZE + CELL_SIZE // 2
+        color = PLAYER1_COLOR if player == 1 else PLAYER2_COLOR
+        canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
 
-            affiche_le_gagnant(equipe_gagnante)
+    # Définir la fonction pour jouer un coup
+    def play(column, player):
+        for row in range(ROWS - 1, -1, -1):
+            if board[row][column] == 0:
+                board[row][column] = player
+                draw_token(row, column, player)
+                return True
+        return False
+
+    # Définir la fonction pour vérifier si le jeu est terminé
+    def check_win(player):
+        # Vérifier les lignes
+        for row in range(ROWS):
+            for col in range(COLS - 3):
+                if board[row][col] == player and board[row][col + 1] == player and board[row][col + 2] == player and board[row][col + 3] == player:
+                    return True
+        # Vérifier les colonnes
+        for row in range(ROWS - 2):
+            for col in range(COLS):
+                if board[row][col] == player and board[row + 1][col] == player and board[row + 2][col] == player and board[row + 3][col] == player:
+                    return True
+        # Vérifier les diagonales
+        for row in range(ROWS - 3):
+            for col in range(COLS - 3):
+                if board[row][col] == player and board[row + 1][col + 1] == player and board[row + 2][col + 2] == player and board[row + 3][col + 3] == player:
+                    return True
+                if board[row + 3][col] == player and board[row + 2][col + 1] == player and board[row + 1][col + 2] == player and board[row][col + 3] == player:
+                    return True
+        return False
+
+    # Définir la fonction pour jouer un tour
+    def play_turn(column, player):
+        if play(column, player):
+            if check_win(player):
+                canvas.unbind("<Button-1>")
+                label.config(text="Le joueur {} a gagné !".format(player))
+            elif player == 1:
+                label.config(text="C'est au tour du joueur 2.")
+                canvas.unbind("<Button-1>")
+                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 2))
+            else:
+                label.config(text="C'est au tour du joueur 1.")
+                canvas.unbind("<Button-1>")
+                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 1))
+
+    # Dessiner la grille de jeu
+    canvas = tk.Canvas(Racine, width=CELL_SIZE * COLS, height=CELL_SIZE * ROWS)
+    canvas.pack()
+    draw_board()
+
+    #Bouton de retour 
+    Bouton_Retour_1v1 = tk.Button(Racine, text="Retour", font=("Magneto",20),foreground="black",background="grey", width=16, command= retour_menu)
+    Bouton_Retour_1v1.pack(side="top", anchor="nw", padx=10, pady=10)
     
-    return equipe_gagnante != "white"
-        
-
-
-def create_jeton(x,y,color="white", outline_=""):
-    global canvas
-    x0,y0, x1,y1 = x+BORDER,y+BORDER, x+radius+BORDER, y+radius+BORDER
-    jetons = canvas.create_oval(x0,y0, x1,y1, fill=color, outline="blue")
-    return jetons
-
-
-def create_blanks():#fait les rond blanc
+    #Boutton exit
     
-    for i in range(6):
-        for j in range(7):
-            create_jeton(j*radius,i*radius)
+    # Afficher le message de début de partie
+    label = tk.Label(Racine, text="C'est au tour du joueur 1.")
+    label.pack()
 
-def tomber_du_jeton(jetons, y_max, id_after=None):
-    global canvas
+    # Demander au joueur 1 de jouer le premier coup
+    canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 1))
 
-    dy = 30
-    latency = 20
-    y = canvas.coords(jetons)[3]
-
-    if y > y_max:
-        canvas.after_cancel(id_after)
-    elif y+dy > y_max : 
-        canvas.move(jetons,0, y_max-y)
-    else:
-        canvas.move(jetons,0,dy)
-        id_after = canvas.after(latency, lambda:tomber_du_jeton(jetons,y_max, id_after))
+    dans_simple = True
 
 
-def ajouter_jetons(event, base_x=-1):
-    global canvas, id_after, l_jeton_obj, team, l_moves, l_jeton
-
-    if base_x == -1:
-        x = (event.x- BORDER)//radius
-    else:
-        x = base_x
 
 
-    if (x >= 0) and (x <= 6) and (d_jeton[x]<6):
-        team = (team + 1) % 2
 
-        column = x 
-        i = len(l_jeton)-1
-        while l_jeton[i][column]!=-1 and i>0: 
-                i -= 1
-        
-        l_jeton[i][column] = team
+# Menu Option 
+def changement_valeur_X(valX):
+    global X 
+    X = valX
+    Racine.geometry(str(X) + "x" + str(Y))
 
-        l_x_moves.append(x)
-        d_jeton[x] += 1
-
-        
-        l_jeton_obj.append(create_jeton(x* radius,0, team_color[team]))
-        tomber_du_jeton(l_jeton_obj[-1], HEIGHT-BORDER-((d_jeton[x]-1)*radius))
-        
-        gagnant()
-
-        if len(l_jeton_obj) == 42:
-            affiche_le_gagnant("white")
+def changement_valeur_Y(valY):
+    global Y 
+    Y = valY
+    Racine.geometry(str(X) + "x" + str(Y))
 
 
-def annuler_coups(canvas):#boutton pour annuler un coups jouer
-    global d_jeton,l_jeton_obj,l_x_moves, team, l_jeton
 
-    if l_x_moves != []:
-        column = l_x_moves.pop()
+def menu_options():
+    global dans_simple, Titre2, Curseur_Fenetre_enX, Valeur_Curseur_Fenetre_X, Curseur_Fenetre_enY, Valeur_Curseur_Fenetre_Y, Bouton_Retour_Menu_Options
 
-        if d_jeton[column] > 0:
-            
-            i = 6-d_jeton[column]
-            l_jeton[i][column] = -1
+    # Efface tous les widgets sauf le label contenant l'image de background
+    for widget in Racine.winfo_children():
+        if widget != background_label:
+            widget.pack_forget()
+    
+    # Elements menu options 
+    Titre2 = tk.Label(Racine, text="Options :", font=("Magneto",50), relief="raised" ,foreground="Red",background="#258FCF", width=15, highlightbackground="#0082D1", highlightthickness= 5)
+    Curseur_Fenetre_enX = tk.Scale(Racine, from_=800, to=1900, orient= "horizontal", length=400, command=changement_valeur_X)
+    Curseur_Fenetre_enX.set(1900)
+    Curseur_Fenetre_enX.config(label="Largeur de la fenêtre", font=("Snap ITC", 10),foreground="Red",background="#258FCF", width=15)
+    Valeur_Curseur_Fenetre_X = tk.Label(Racine)
+    Curseur_Fenetre_enY = tk.Scale(Racine, from_=600, to=1080, orient= "horizontal", length=400, command=changement_valeur_Y)
+    Curseur_Fenetre_enY.set(1080)
+    Curseur_Fenetre_enY.config(label="Hauteur de la fenêtre", font=("Snap ITC", 10),foreground="Red",background="#258FCF", width=15)
+    Valeur_Curseur_Fenetre_Y = tk.Label(Racine)
+    Bouton_Retour_Menu_Options = tk.Button(Racine, text="Retour", font=("Magneto",20),foreground="black",background="grey", width=16, command= retour_menu)
 
-            team = (team + 1) % 2
-            d_jeton[column] -= 1
-            canvas.delete(l_jeton_obj.pop())
+    # Placement des options 
+    Titre2.pack(pady=50)
+    Curseur_Fenetre_enX.pack()
+    Valeur_Curseur_Fenetre_X.pack()
+    Curseur_Fenetre_enY.pack()
+    Valeur_Curseur_Fenetre_Y.pack()
+    Bouton_Retour_Menu_Options.pack(side="top", anchor="nw", padx=10, pady=10)
+
+    dans_simple = True
+
+# Musique
+def play_music():
+    pygame.mixer.music.load("C:/Users/mamin/Downloads/Married Life.mp3")
+    pygame.mixer.music.play(loops=-1) 
+
+def retour_menu():
+    global dans_simple
+    dans_simple = False
+
+     # Efface tous les widgets sauf le label contenant l'image de background
+    for widget in Racine.winfo_children():
+        if widget != background_label:
+            widget.pack_forget()
+    
+    # Recrée les éléments du menu principal
+    Titre.pack(pady=100)
+    Bouton_1Vs1_Simple.pack(pady=15)
+    Bouton_1Vs1_MultiMatch.pack(pady=15)
+    Bouton_1VsIA.pack(pady=15)
+    Bouton_Option.pack(pady=15)
+
+    # Variable pour suivre l'état de la fenêtre
+    dans_simple = False
+
+X = 1900 
+Y = 1080
+val_taillefenetre = (str(X) + "x" + str(Y))
+Racine = tk.Tk()
+Racine.title("Puissance 4")
+Racine.geometry(val_taillefenetre) 
+
+# Création des éléments initiaux
+image = tk.PhotoImage(file="C:/Users/mamin/Downloads/Hajj_Uchiwa_leaf_light_blue_light_red_4k_5800ce7f-8d76-417f-b99c-efc8ee76feb9(2).png")
+background_label = tk.Label(Racine, image=image)
+background_label.configure(width=Racine.winfo_width(), height=Racine.winfo_height())
+
+Titre = tk.Label(Racine, text="Puissance ⁴", font=("Magneto",80), relief="raised" ,foreground="Red",background="#258FCF", width=20, highlightbackground="#0082D1", highlightthickness= 10) 
+Titre.config(font=("Magneto", 80, "underline"))
+Bouton_1Vs1_Simple = tk.Button(Racine, text="1 Vs 1 Simple", font=("Magneto",30),foreground="black",background="grey", width=17, command= jeu_1v1)
+Bouton_1Vs1_MultiMatch = tk.Button(Racine, text="1 Vs 1 Multi-Manche",font=("Magneto",30),foreground="black",background="grey", width=17)
+Bouton_1VsIA = tk.Button(Racine, text="1 Vs IA",font=("Magneto",30),foreground="black",background="grey", width=17 )
+Bouton_Option = tk.Button(Racine, text="Options",font=("Magneto",30),foreground="black",background="grey", width=17, command=menu_options)
+
+# Initialisation de Pygame, lancement musique
+pygame.mixer.init()
+play_music()
+
+# Placement des éléments initiaux
+background_label.place(x=0, y=0, relwidth=1, relheight=1)
+Titre.pack(pady=100)
+Bouton_1Vs1_Simple.pack(pady=15)
+Bouton_1Vs1_MultiMatch.pack(pady=15)
+Bouton_1VsIA.pack(pady=15)
+Bouton_Option.pack(pady=15)
+
+# Variable pour suivre l'état de la fenêtre
+dans_simple = False
+
+
+
+
+
+
+# Démarrage de la boucle principale de l'application
+Racine.mainloop()
+#shera
+
+
+
+       
