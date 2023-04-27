@@ -6,7 +6,7 @@ CASSE Ahmed
 VENET Antonin 
 Abou OKAF
 
- PUISSANCE 4 : 
+ ## PUISSANCE 4 : 
  GRP 6:
  
  Le puissance 4 est un jeu a 2 joueurs
