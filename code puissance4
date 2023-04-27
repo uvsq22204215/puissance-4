@@ -56,23 +56,28 @@ def jeu_1v1():
                 canvas.create_rectangle(x1, y1, x2, y2, fill=BG_COLOR, outline="black",width=4)
 
     def draw_token(row, col, player):
+        global jeton_placé
         x = col * CELL_SIZE + CELL_SIZE // 2
         y = row * CELL_SIZE + CELL_SIZE // 2
         color = PLAYER1_COLOR if player == 1 else PLAYER2_COLOR
-        canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
+        jeton_placé = canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
 
     # Définir la fonction pour jouer un coup
+    Dernier_coup = None
     def play(column, player):
+        global Dernier_coup
         for row in range(ROWS - 1, -1, -1):
             if board[row][column] == 0:
                 board[row][column] = player
                 draw_token(row, column, player)
+                Dernier_coup = (row, column)
                 return True
         return False
     
-
-
-
+    # Définir une fonction pour annuler un coup 
+    def annuler_coup_precedent(row, column):
+        if Dernier_coup != None:
+            canvas.delete("jeton_placé_{}_{}".format(row,column))
 
 
     # Définir la fonction pour vérifier si le jeu est terminé
@@ -169,6 +174,13 @@ def jeu_1v1():
     canvas = tk.Canvas(Racine, width=CELL_SIZE * COLS, height=CELL_SIZE * ROWS)
     canvas.pack()
     draw_board()
+
+    # Bouton pour annuler un coup
+    Bouton_annuler_coup = tk.Button(Racine, text="Annuler", font=("Magneto",20),foreground="black",background="grey", width=16, command= annuler_coup_precedent)
+    Bouton_annuler_coup.pack(side="top", anchor="nw", padx=10, pady=10)
+
+
+
 
     # Bouton de retour 
     Bouton_Retour_1v1 = tk.Button(Racine, text="Retour", font=("Magneto",20),foreground="black",background="grey", width=16, command= retour_menu)
@@ -294,6 +306,4 @@ dans_simple = False
 
 # Démarrage de la boucle principale de l'application
 Racine.mainloop()
-#sher
-
 
