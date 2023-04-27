@@ -37,4 +37,6 @@ Amusez-vous bien!
 WARNING ! : le multimanche et l'IA ne sont pas fonctionnel.
 
 Si vous avez un problème pour éxécuter le jeu vous pouvez installez l'extension py game pour la musique ou changer le chemin d'accès ( lien derrière ' file: ')de la musique ou du fond 
+
+sources : chatgpt pour résolutions de problèmes lier a la mise en page, https://www.pierre-giraud.com/python-apprendre-programmer-cours/introduction-manipulation-fichier/  (pour la partie sauvegarde), https://www.infoforall.fr/art/python/fiche-projet-tkinter-puissance-4/ (inspiration générale du projet)
 #### https://github.com/uvsq22204215/puissance-4/blob/main/code%20puissance4
