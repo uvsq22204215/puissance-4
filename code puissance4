@@ -7,7 +7,6 @@ from tkinter import ttk
 import pygame 
 import random
 
-player=random.randint(0, 1)
 
 def focus_on_simple():
     global dans_simple
@@ -16,7 +15,7 @@ def focus_on_simple():
 
 # Base de Jeu (1v1)
 def jeu_1v1():
-    player = 2 
+    player = 2
     # Efface tous les widgets sauf le label contenant l'image de background
     for widget in Racine.winfo_children():
         if widget != background_label:
@@ -103,14 +102,15 @@ def jeu_1v1():
             if check_win(player):
                 canvas.unbind("<Button-1>")
                 label.config(text="Le joueur {} a gagné !".format(player))
-            elif player == 1:
-                label.config(text="C'est au tour du joueur 2.")
+            elif all(all(row) for row in board):
                 canvas.unbind("<Button-1>")
-                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 2))
+                label.config(text="Match nul !")
             else:
-                label.config(text="C'est au tour du joueur 1.")
+                next_player = 2 if player == 1 else 1
+                label.config(text="C'est au tour du joueur {}.".format(next_player))
                 canvas.unbind("<Button-1>")
-                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 1))
+                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, next_player))
+
 
     # Définir une fonction pour sauvegarder la partie en cours
     def save_game():
@@ -203,12 +203,6 @@ def changement_valeur_Y(valY):
     Y = valY
     Racine.geometry(str(X) + "x" + str(Y))
 
-def sauvegarder():#boutton pour sauvegarder la partie
-    global l_jeton
-
-    with open("sauvegarder", "w") as file:
-        file.write(str(l_jeton))
-
 
 def menu_options():
     global dans_simple, Titre2, Curseur_Fenetre_enX, Valeur_Curseur_Fenetre_X, Curseur_Fenetre_enY, Valeur_Curseur_Fenetre_Y, Bouton_Retour_Menu_Options
@@ -242,7 +236,7 @@ def menu_options():
 
 # Musique
 def play_music():
-    pygame.mixer.music.load("C:/Users/sefri/Downloads/Married Life.mp3")
+    pygame.mixer.music.load("C:/Users/mamin/Downloads/puissance4-1/Married Life.mp3")
     pygame.mixer.music.play(loops=-1) 
 
 def retour_menu():
@@ -272,7 +266,7 @@ Racine.title("Puissance 4")
 Racine.geometry(val_taillefenetre) 
 
 # Création des éléments initiaux
-image = tk.PhotoImage(file="C:/Users/sefri/Downloads/image de fond puissance.png")
+image = tk.PhotoImage(file="C:/Users/mamin/Downloads/puissance4-1/Hajj_Uchiwa_leaf_light_blue_light_red_4k_5800ce7f-8d76-417f-b99c-efc8ee76feb9(2).png")
 background_label = tk.Label(Racine, image=image)
 background_label.configure(width=Racine.winfo_width(), height=Racine.winfo_height())
 
@@ -282,8 +276,7 @@ Bouton_1Vs1_Simple = tk.Button(Racine, text="1 Vs 1 Simple", font=("Magneto",30)
 Bouton_1Vs1_MultiMatch = tk.Button(Racine, text="1 Vs 1 Multi-Manche",font=("Magneto",30),foreground="black",background="grey", width=17)
 Bouton_1VsIA = tk.Button(Racine, text="1 Vs IA",font=("Magneto",30),foreground="black",background="grey", width=17 )
 Bouton_Option = tk.Button(Racine, text="Options",font=("Magneto",30),foreground="black",background="grey", width=17, command=menu_options)
-exit_button = tk.Button(Racine, text="Exit",font=("Magneto",30), foreground="black",background="grey",width=17, command=Racine.destroy)#boutton pour quitter la parti et fermer la fenêtre
-exit_button.pack()
+Exit_boutton = tk.Button(Racine, text="Exit",font=("Magneto",15), foreground="black",background="grey",width=17, command = Racine.destroy)#boutton pour quitter la parti et fermer la fenêtre
 # Initialisation de Pygame, lancement musique
 pygame.mixer.init()
 play_music()
@@ -295,7 +288,7 @@ Bouton_1Vs1_Simple.pack(pady=15)
 Bouton_1Vs1_MultiMatch.pack(pady=15)
 Bouton_1VsIA.pack(pady=15)
 Bouton_Option.pack(pady=15)
-exit_button.pack(pady=15)
+Exit_boutton.place(x=0, y=0)
 # Variable pour suivre l'état de la fenêtre
 dans_simple = False
 
