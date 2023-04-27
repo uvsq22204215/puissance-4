@@ -5,6 +5,9 @@ import tkinter as tk
 import tkinter.font as font 
 from tkinter import ttk
 import pygame 
+import random
+
+player=random.randint(0, 1)
 
 def focus_on_simple():
     global dans_simple
@@ -41,6 +44,7 @@ def jeu_1v1():
     # Définir la couleur des jetons
     PLAYER1_COLOR = "#FF4136"
     PLAYER2_COLOR = "#2ECC40"
+           
 
     # Définir les fonctions pour dessiner la grille et les jetons
     def draw_board():
@@ -66,6 +70,9 @@ def jeu_1v1():
                 draw_token(row, column, player)
                 return True
         return False
+    
+
+
 
 
 
@@ -196,6 +203,11 @@ def changement_valeur_Y(valY):
     Y = valY
     Racine.geometry(str(X) + "x" + str(Y))
 
+def sauvegarder():#boutton pour sauvegarder la partie
+    global l_jeton
+
+    with open("sauvegarder", "w") as file:
+        file.write(str(l_jeton))
 
 
 def menu_options():
@@ -230,7 +242,7 @@ def menu_options():
 
 # Musique
 def play_music():
-    pygame.mixer.music.load("C:/Users/mamin/Downloads/Married Life.mp3")
+    pygame.mixer.music.load("C:/Users/sefri/Downloads/Married Life.mp3")
     pygame.mixer.music.play(loops=-1) 
 
 def retour_menu():
@@ -260,7 +272,7 @@ Racine.title("Puissance 4")
 Racine.geometry(val_taillefenetre) 
 
 # Création des éléments initiaux
-image = tk.PhotoImage(file="C:/Users/mamin/Downloads/Hajj_Uchiwa_leaf_light_blue_light_red_4k_5800ce7f-8d76-417f-b99c-efc8ee76feb9(2).png")
+image = tk.PhotoImage(file="C:/Users/sefri/Downloads/image de fond puissance.png")
 background_label = tk.Label(Racine, image=image)
 background_label.configure(width=Racine.winfo_width(), height=Racine.winfo_height())
 
@@ -270,7 +282,8 @@ Bouton_1Vs1_Simple = tk.Button(Racine, text="1 Vs 1 Simple", font=("Magneto",30)
 Bouton_1Vs1_MultiMatch = tk.Button(Racine, text="1 Vs 1 Multi-Manche",font=("Magneto",30),foreground="black",background="grey", width=17)
 Bouton_1VsIA = tk.Button(Racine, text="1 Vs IA",font=("Magneto",30),foreground="black",background="grey", width=17 )
 Bouton_Option = tk.Button(Racine, text="Options",font=("Magneto",30),foreground="black",background="grey", width=17, command=menu_options)
-
+exit_button = tk.Button(Racine, text="Exit",font=("Magneto",30), foreground="black",background="grey",width=17, command=Racine.destroy)#boutton pour quitter la parti et fermer la fenêtre
+exit_button.pack()
 # Initialisation de Pygame, lancement musique
 pygame.mixer.init()
 play_music()
@@ -282,16 +295,12 @@ Bouton_1Vs1_Simple.pack(pady=15)
 Bouton_1Vs1_MultiMatch.pack(pady=15)
 Bouton_1VsIA.pack(pady=15)
 Bouton_Option.pack(pady=15)
-
+exit_button.pack(pady=15)
 # Variable pour suivre l'état de la fenêtre
 dans_simple = False
 
-
-
-
-
-
 # Démarrage de la boucle principale de l'application
 Racine.mainloop()
+#sher
 
 
