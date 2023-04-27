@@ -1,3 +1,6 @@
+import csv
+import json
+import _json
 import tkinter as tk
 import tkinter.font as font 
 from tkinter import ttk
@@ -11,28 +14,35 @@ def focus_on_simple():
     if not dans_simple:
         dans_simple = True
 
-# Base de Jeu (1v1)
+#Base de Jeu (1v1)
 def jeu_1v1():
-    
-    # Efface tous les widgets sauf le label contenant l'image de background
+    player = 2 
+    """ Efface tous les widgets sauf le label contenant l'image de background"""
     for widget in Racine.winfo_children():
         if widget != background_label:
             widget.pack_forget()
 
-    # Définir les dimensions de la grille de jeu
+    """Définir les dimensions de la grille de jeu"""
     ROWS = 6
     COLS = 7
 
-    # Créer la grille de jeu
-    board = [[0 for j in range(COLS)] for i in range(ROWS)]
+    """Créer la grille de jeu"""
+    board = []
 
-    # Définir la taille de chaque case de la grille
+    for i in range(ROWS):
+        row = []
+        for j in range(COLS):
+            row.append(0)
+        board.append(row)
+
+
+    """Définir la taille de chaque case de la grille"""
     CELL_SIZE = 110
 
-    # Définir la couleur de fond de la grille
+    """ Définir la couleur de fond de la grille"""
     BG_COLOR = "#0074D9"
 
-    # Définir la couleur des jetons
+    """Définir la couleur des jetons"""
     PLAYER1_COLOR = "#FF4136"
     PLAYER2_COLOR = "#2ECC40"
            
@@ -53,7 +63,7 @@ def jeu_1v1():
         color = PLAYER1_COLOR if player == 1 else PLAYER2_COLOR
         canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
 
-    # Définir la fonction pour jouer un coup
+    #Définir la fonction pour jouer un coup
     def play(column, player):
         for row in range(ROWS - 1, -1, -1):
             if board[row][column] == 0:
@@ -65,19 +75,21 @@ def jeu_1v1():
 
 
 
+
+
     # Définir la fonction pour vérifier si le jeu est terminé
     def check_win(player):
-        # Vérifier les lignes
+        """Vérifier les lignes"""
         for row in range(ROWS):
-            for col in range(COLS - 3):
+            for col in range(COLS -3 ):
                 if board[row][col] == player and board[row][col + 1] == player and board[row][col + 2] == player and board[row][col + 3] == player:
                     return True
-        # Vérifier les colonnes
-        for row in range(ROWS - 2):
+        """Vérifier les colonnes"""
+        for row in range(ROWS - 3):
             for col in range(COLS):
                 if board[row][col] == player and board[row + 1][col] == player and board[row + 2][col] == player and board[row + 3][col] == player:
                     return True
-        # Vérifier les diagonales
+        """Vérifier les diagonales"""
         for row in range(ROWS - 3):
             for col in range(COLS - 3):
                 if board[row][col] == player and board[row + 1][col + 1] == player and board[row + 2][col + 2] == player and board[row + 3][col + 3] == player:
@@ -86,7 +98,7 @@ def jeu_1v1():
                     return True
         return False
 
-    # Définir la fonction pour jouer un tour
+    #Définir la fonction pour jouer un tour
     def play_turn(column, player):
         if play(column, player):
             if check_win(player):
@@ -101,14 +113,75 @@ def jeu_1v1():
                 canvas.unbind("<Button-1>")
                 canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 1))
 
+    # Définir une fonction pour sauvegarder la partie en cours
+    def save_game():
+        """ Ouvrir un fichier csv en mode écriture"""
+        with open('game.csv', mode='w', newline='') as game_file:
+            """ Créer un objet writer pour écrire dans le fichier csv"""
+            game_writer = csv.writer(game_file)
+            """ Écrire le joueur en train de jouer dans la première ligne"""
+            game_writer.writerow([player])
+            """ Ecrire les couleurs des joueurs dans les deux lignes suivantes """
+            game_writer.writerow([PLAYER1_COLOR])
+            game_writer.writerow([PLAYER2_COLOR])
+            """Écrire l'état de la grille de jeu dans les lignes suivantes"""
+            for row in board:
+                game_writer.writerow(row)
+            """Afficher un message de confirmation"""
+            label.config(text="Partie sauvegardée !")
+
+    # Définir une fonction de chargement de la partie 
+    def load_game():
+        global board, player, PLAYER1_COLOR, PLAYER2_COLOR
+        
+        """ Ouvrir le fichier csv en mode lecture"""
+        with open('game.csv', mode='r', newline='') as game_file:
+            """ Créer un objet reader pour lire le fichier csv"""
+            game_reader = csv.reader(game_file)
+            """ Lire le joueur en train de jouer dans la première ligne"""
+            player = int(next(game_reader)[0])
+            """ Lire les couleurs des joueurs dans les deux lignes suivantes"""
+            PLAYER1_COLOR = next(game_reader)[0]
+            PLAYER2_COLOR = next(game_reader)[0]
+            """ Lire l'état de la grille de jeu dans les lignes suivantes"""
+            board = []
+            for row in game_reader:
+                row_list = []
+                for x in row:
+                    row_list.append(int(x))
+                board.append(row_list)
+                
+        """ Dessiner la grille de jeu"""
+        draw_board()
+
+        """Dessiner les jetons"""
+        for row in range(ROWS):
+            for col in range(COLS):
+                if board[row][col] != 0:
+                    x, y = col * CELL_SIZE + CELL_SIZE//2, row * CELL_SIZE + CELL_SIZE//2
+                    color = PLAYER1_COLOR if board[row][col] == 1 else PLAYER2_COLOR
+                    canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
+        
+    
+
+
+
     # Dessiner la grille de jeu
     canvas = tk.Canvas(Racine, width=CELL_SIZE * COLS, height=CELL_SIZE * ROWS)
     canvas.pack()
     draw_board()
 
-    #Bouton de retour 
+    # Bouton de retour 
     Bouton_Retour_1v1 = tk.Button(Racine, text="Retour", font=("Magneto",20),foreground="black",background="grey", width=16, command= retour_menu)
     Bouton_Retour_1v1.pack(side="top", anchor="nw", padx=10, pady=10)
+
+    # Bouton de sauvegarde 
+    Bouton_de_sauvegarde = tk.Button(Racine, text="Sauvegarder", font=("Magneto",20),foreground="black",background="grey", width=16, command= save_game)
+    Bouton_de_sauvegarde.pack(side="top", anchor="nw", padx=10, pady=10)
+
+    # Bouton de chargement 
+    Bouton_de_chargement = tk.Button(Racine, text="Charger Partie", font=("Magneto",20),foreground="black",background="grey", width=16, command= load_game)
+    Bouton_de_chargement.pack(side="top", anchor="nw", padx=10, pady=10)
 
     # Afficher le message de début de partie
     label = tk.Label(Racine, text="C'est au tour du joueur 1.")
@@ -118,9 +191,6 @@ def jeu_1v1():
     canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 1))
 
     dans_simple = True
-
-
-
 
 
 # Menu Option 
@@ -133,12 +203,6 @@ def changement_valeur_Y(valY):
     global Y 
     Y = valY
     Racine.geometry(str(X) + "x" + str(Y))
-
-def sauvegarder():#boutton pour sauvegarder la partie
-    global l_jeton
-
-    with open("sauvegarder", "w") as file:
-        file.write(str(l_jeton))
 
 
 def menu_options():
@@ -180,19 +244,19 @@ def retour_menu():
     global dans_simple
     dans_simple = False
 
-     # Efface tous les widgets sauf le label contenant l'image de background
+    """ Efface tous les widgets sauf le label contenant l'image de background"""
     for widget in Racine.winfo_children():
         if widget != background_label:
             widget.pack_forget()
     
-    # Recrée les éléments du menu principal
+    """Recrée les éléments du menu principal"""
     Titre.pack(pady=100)
     Bouton_1Vs1_Simple.pack(pady=15)
     Bouton_1Vs1_MultiMatch.pack(pady=15)
     Bouton_1VsIA.pack(pady=15)
     Bouton_Option.pack(pady=15)
 
-    # Variable pour suivre l'état de la fenêtre
+    """ Variable pour suivre l'état de la fenêtre"""
     dans_simple = False
 
 X = 1900 
@@ -232,6 +296,6 @@ dans_simple = False
 
 # Démarrage de la boucle principale de l'application
 Racine.mainloop()
-#sher
+
 
 
