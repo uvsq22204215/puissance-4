@@ -7,26 +7,28 @@ from tkinter import ttk
 import pygame 
 import random
 
+player=random.randint(0, 1)
 
 def focus_on_simple():
     global dans_simple
     if not dans_simple:
         dans_simple = True
 
-# Base de Jeu (1v1)
+#Base de Jeu (1v1)
 def jeu_1v1():
-    player = 2
-    # Efface tous les widgets sauf le label contenant l'image de background
+    player = 2 
+    """ Efface tous les widgets sauf le label contenant l'image de background"""
     for widget in Racine.winfo_children():
         if widget != background_label:
             widget.pack_forget()
 
-    # Définir les dimensions de la grille de jeu
+    """Définir les dimensions de la grille de jeu"""
     ROWS = 6
     COLS = 7
 
-    # Créer la grille de jeu
+    """Créer la grille de jeu"""
     board = []
+
     for i in range(ROWS):
         row = []
         for j in range(COLS):
@@ -34,13 +36,13 @@ def jeu_1v1():
         board.append(row)
 
 
-    # Définir la taille de chaque case de la grille
+    """Définir la taille de chaque case de la grille"""
     CELL_SIZE = 110
 
-    # Définir la couleur de fond de la grille
+    """ Définir la couleur de fond de la grille"""
     BG_COLOR = "#0074D9"
 
-    # Définir la couleur des jetons
+    """Définir la couleur des jetons"""
     PLAYER1_COLOR = "#FF4136"
     PLAYER2_COLOR = "#2ECC40"
            
@@ -60,9 +62,9 @@ def jeu_1v1():
         x = col * CELL_SIZE + CELL_SIZE // 2
         y = row * CELL_SIZE + CELL_SIZE // 2
         color = PLAYER1_COLOR if player == 1 else PLAYER2_COLOR
-        jeton_placé = canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
+        canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
 
-    # Définir la fonction pour jouer un coup
+    #Définir la fonction pour jouer un coup
     Dernier_coup = None
     def play(column, player):
         global Dernier_coup
@@ -75,24 +77,28 @@ def jeu_1v1():
         return False
     
     # Définir une fonction pour annuler un coup 
-    def annuler_coup_precedent(row, column):
-        if Dernier_coup != None:
-            canvas.delete("jeton_placé_{}_{}".format(row,column))
+    def annuler_coup_precedent():
+        global jeton_placé, Dernier_coup, player
+        if Dernier_coup is not None:
+            row, col = Dernier_coup
+            canvas.delete(jeton_placé)
+            board[row][col] = 0
+            Dernier_coup = None
 
 
     # Définir la fonction pour vérifier si le jeu est terminé
     def check_win(player):
-        # Vérifier les lignes
+        """Vérifier les lignes"""
         for row in range(ROWS):
-            for col in range(COLS - 3):
+            for col in range(COLS -3 ):
                 if board[row][col] == player and board[row][col + 1] == player and board[row][col + 2] == player and board[row][col + 3] == player:
                     return True
-        # Vérifier les colonnes
+        """Vérifier les colonnes"""
         for row in range(ROWS - 3):
             for col in range(COLS):
                 if board[row][col] == player and board[row + 1][col] == player and board[row + 2][col] == player and board[row + 3][col] == player:
                     return True
-        # Vérifier les diagonales
+        """Vérifier les diagonales"""
         for row in range(ROWS - 3):
             for col in range(COLS - 3):
                 if board[row][col] == player and board[row + 1][col + 1] == player and board[row + 2][col + 2] == player and board[row + 3][col + 3] == player:
@@ -101,53 +107,52 @@ def jeu_1v1():
                     return True
         return False
 
-    # Définir la fonction pour jouer un tour
+    #Définir la fonction pour jouer un tour
     def play_turn(column, player):
         if play(column, player):
             if check_win(player):
                 canvas.unbind("<Button-1>")
                 label.config(text="Le joueur {} a gagné !".format(player))
-            elif all(all(row) for row in board):
+            elif player == 1:
+                label.config(text="C'est au tour du joueur 2.")
                 canvas.unbind("<Button-1>")
-                label.config(text="Match nul !")
+                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 2))
             else:
-                next_player = 2 if player == 1 else 1
-                label.config(text="C'est au tour du joueur {}.".format(next_player))
+                label.config(text="C'est au tour du joueur 1.")
                 canvas.unbind("<Button-1>")
-                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, next_player))
-
+                canvas.bind("<Button-1>", lambda event: play_turn(event.x // CELL_SIZE, 1))
 
     # Définir une fonction pour sauvegarder la partie en cours
     def save_game():
-        # Ouvrir un fichier csv en mode écriture
+        """ Ouvrir un fichier csv en mode écriture"""
         with open('game.csv', mode='w', newline='') as game_file:
-            # Créer un objet writer pour écrire dans le fichier csv
+            """ Créer un objet writer pour écrire dans le fichier csv"""
             game_writer = csv.writer(game_file)
-            # Écrire le joueur en train de jouer dans la première ligne
+            """ Écrire le joueur en train de jouer dans la première ligne"""
             game_writer.writerow([player])
-            # Ecrire les couleurs des joueurs dans les deux lignes suivantes 
+            """ Ecrire les couleurs des joueurs dans les deux lignes suivantes """
             game_writer.writerow([PLAYER1_COLOR])
             game_writer.writerow([PLAYER2_COLOR])
-            # Écrire l'état de la grille de jeu dans les lignes suivantes
+            """Écrire l'état de la grille de jeu dans les lignes suivantes"""
             for row in board:
                 game_writer.writerow(row)
-            # Afficher un message de confirmation
+            """Afficher un message de confirmation"""
             label.config(text="Partie sauvegardée !")
 
     # Définir une fonction de chargement de la partie 
     def load_game():
-        global board, player, PLAYER1_COLOR, PLAYER2_COLOR
+        global board, PLAYER1_COLOR, PLAYER2_COLOR
         
-        # Ouvrir le fichier csv en mode lecture
+        """ Ouvrir le fichier csv en mode lecture"""
         with open('game.csv', mode='r', newline='') as game_file:
-            # Créer un objet reader pour lire le fichier csv
+            """ Créer un objet pour lire le fichier csv"""
             game_reader = csv.reader(game_file)
-            # Lire le joueur en train de jouer dans la première ligne
+            """ Lire le joueur en train de jouer dans la première ligne"""
             player = int(next(game_reader)[0])
-            # Lire les couleurs des joueurs dans les deux lignes suivantes
+            """ Lire les couleurs des joueurs dans les deux lignes suivantes"""
             PLAYER1_COLOR = next(game_reader)[0]
             PLAYER2_COLOR = next(game_reader)[0]
-            # Lire l'état de la grille de jeu dans les lignes suivantes
+            """ Lire l'état de la grille de jeu dans les lignes suivantes"""
             board = []
             for row in game_reader:
                 row_list = []
@@ -155,10 +160,10 @@ def jeu_1v1():
                     row_list.append(int(x))
                 board.append(row_list)
                 
-        # Dessiner la grille de jeu
+        """ Dessiner la grille de jeu"""
         draw_board()
 
-        # Dessiner les jetons
+        """Dessiner les jetons"""
         for row in range(ROWS):
             for col in range(COLS):
                 if board[row][col] != 0:
@@ -255,19 +260,19 @@ def retour_menu():
     global dans_simple
     dans_simple = False
 
-     # Efface tous les widgets sauf le label contenant l'image de background
+    """ Efface tous les widgets sauf le label contenant l'image de background"""
     for widget in Racine.winfo_children():
         if widget != background_label:
             widget.pack_forget()
     
-    # Recrée les éléments du menu principal
+    """Recrée les éléments du menu principal"""
     Titre.pack(pady=100)
     Bouton_1Vs1_Simple.pack(pady=15)
     Bouton_1Vs1_MultiMatch.pack(pady=15)
     Bouton_1VsIA.pack(pady=15)
     Bouton_Option.pack(pady=15)
 
-    # Variable pour suivre l'état de la fenêtre
+    """ Variable pour suivre l'état de la fenêtre"""
     dans_simple = False
 
 X = 1900 
@@ -288,7 +293,7 @@ Bouton_1Vs1_Simple = tk.Button(Racine, text="1 Vs 1 Simple", font=("Magneto",30)
 Bouton_1Vs1_MultiMatch = tk.Button(Racine, text="1 Vs 1 Multi-Manche",font=("Magneto",30),foreground="black",background="grey", width=17)
 Bouton_1VsIA = tk.Button(Racine, text="1 Vs IA",font=("Magneto",30),foreground="black",background="grey", width=17 )
 Bouton_Option = tk.Button(Racine, text="Options",font=("Magneto",30),foreground="black",background="grey", width=17, command=menu_options)
-Exit_boutton = tk.Button(Racine, text="Exit",font=("Magneto",15), foreground="black",background="grey",width=17, command = Racine.destroy)#boutton pour quitter la parti et fermer la fenêtre
+exit_button = tk.Button(Racine, text="Exit",font=("Magneto",15), foreground="black",background="grey",width=17, command=Racine.destroy)#boutton pour quitter la parti et fermer la fenêtre
 # Initialisation de Pygame, lancement musique
 pygame.mixer.init()
 play_music()
@@ -300,10 +305,12 @@ Bouton_1Vs1_Simple.pack(pady=15)
 Bouton_1Vs1_MultiMatch.pack(pady=15)
 Bouton_1VsIA.pack(pady=15)
 Bouton_Option.pack(pady=15)
-Exit_boutton.place(x=0, y=0)
+exit_button.place(x = 0, y = 0)
 # Variable pour suivre l'état de la fenêtre
 dans_simple = False
 
 # Démarrage de la boucle principale de l'application
 Racine.mainloop()
+
+
 
