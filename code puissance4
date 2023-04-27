@@ -62,10 +62,11 @@ def jeu_1v1():
         x = col * CELL_SIZE + CELL_SIZE // 2
         y = row * CELL_SIZE + CELL_SIZE // 2
         color = PLAYER1_COLOR if player == 1 else PLAYER2_COLOR
-        canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
+        jeton_placé = canvas.create_oval(x - CELL_SIZE // 2, y - CELL_SIZE // 2, x + CELL_SIZE // 2, y + CELL_SIZE // 2, fill=color)
 
-    #Définir la fonction pour jouer un coup
     Dernier_coup = None
+    
+    #Définir la fonction pour jouer un coup
     def play(column, player):
         global Dernier_coup
         for row in range(ROWS - 1, -1, -1):
