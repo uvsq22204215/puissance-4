@@ -36,5 +36,5 @@ Le premier joueur à connecter quatre jetons en une ligne soit horizontalement, 
 Amusez-vous bien!
 WARNING ! : le multimanche et l'IA ne sont pas fonctionnel.
 
- 
+Si vous avez un problème pour éxécuter le jeu vous pouvez installez l'extension py game pour la musique ou changer le chemin d'accès ( lien derrière ' file: ')de la musique ou du fond 
 #### https://github.com/uvsq22204215/puissance-4/blob/main/code%20puissance4
