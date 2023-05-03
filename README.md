@@ -39,9 +39,13 @@ WARNING ! : le multimanche et l'IA ne sont pas fonctionnel.
 Si vous avez un problème pour éxécuter le jeu vous pouvez installez l'extension py game pour la musique ou changer le chemin d'accès ( lien derrière ' file: ')de la musique ou du fond 
 
 répartition des fonctions:
+
 Ahmed: fonction, focus on simple ( pour savoir dans quelle page on se trouve), interface graphique général de notre jeu avec la création des jetons(draw token) et de la grille (draw board) avec tkinter.
+
 Abou: fonction de sauvegarde et de chargement, retirer un coup jouer, menu options et fonction play qui permet de faire tomber les jetons.
+
 Sherazad : fonction qui vérifie les lignes et les colonnes dans check win, la fonction jeu 1v1 qui créer la grille "virtuelle" qui va nous permettre de jouer.
+
 Antonin : fonction qui vérifie les diagonales dans check win, boutoun retour menu, et play turn pour savoir c'est a qui de jouer.
 
 
